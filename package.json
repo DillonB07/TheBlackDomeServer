@@ -5,16 +5,27 @@
   "author": "Dillon Barnes <dillonb07dev@gmail.com>",
   "keywords": [],
   "license": "ISC",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "bun index.js"
+    "start": "bun index.ts"
   },
   "dependencies": {
+    "ejs": "^3.1.9",
     "express": "^4.19.2",
     "http-errors": "^2.0.0",
     "pino": "^8.20.0",
     "pino-http": "^9.0.0",
     "pino-pretty": "^11.0.0",
     "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "@types/react-dom": "^18.2.24",
+    "@types/ws": "^8.5.10"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   }
 }

@@ -1,0 +1,39 @@
+ <html>
+    <head>
+        <title>
+            Black Dome of Death
+        </title>
+        <script>
+            
+            function send() {
+                const message = document.getElementById('message').value;
+                ws.send(message);
+            }
+            
+            const ws = new WebSocket('ws://localhost:3000');
+            ws.onopen = () => {
+                console.log('Connected to server');
+                ws.send('Hey Bun, I\'m a player!')
+            };
+            ws.onmessage = (message) => {
+                console.log('Received message:', message.data);
+            };
+            ws.onclose = () => {
+                console.log('Disconnected from server');
+            };
+            ws.onerror = (error) => {
+                console.error('Error:', error);
+            };
+        </script>
+    </head>
+    <body>
+    <h1>
+        Welcome to the Black Dome of Death!
+    </h1>
+    <p>
+        This game is nowhere near functional yet.
+    </p>
+    <input id="message" type="text" />
+    <button onclick="send()">Send</button>
+    </body>
+ </html>
