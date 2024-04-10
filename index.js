@@ -1,27 +1,27 @@
-'use strict'
-const express = require('express')
+import express from 'express';
+import { Server as WebSocketServer } from 'ws';
 
-// Create the express app
-const app = express()
+const app = express();
+const port = 3000;
 
-// Routes and middleware
-// app.use(/* ... */)
-// app.get(/* ... */)
+app.get('/', (req, res) => {
+    res.send("Hi! I'm glad you're excited to play, but the game's not ready yet sorry!");
+});
 
-// Error handlers
-app.use(function fourOhFourHandler (req, res) {
-  res.status(404).send()
-})
-app.use(function fiveHundredHandler (err, req, res, next) {
-  console.error(err)
-  res.status(500).send()
-})
+const server = app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
 
-// Start server
-app.listen(1234, function (err) {
-  if (err) {
-    return console.error(err)
-  }
+const wss = new WebSocketServer({ server });
 
-  console.log('Started at http://localhost:1234')
-})
+wss.on('connection', ws => {
+    ws.on('message', message => {
+        if (Buffer.isBuffer(message)) {
+            console.log(message.toString())
+        } else {
+            console.log(message, typeof message);
+        }
+    })
+    
+    ws.send("Hi Unity, I'm Bun!");
+});
