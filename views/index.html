@@ -1,32 +1,80 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>Black Dome of Death</title>
     <script>
-      function send() {
-        const message = document.getElementById("message").value;
-        ws.send(message);
+      const playerId = Math.floor(Math.random() * Date.now())
+      function send(message) {
+        const data = {
+          message,
+          timestamp: Date.now(),
+          clientType: "player",
+          playerId
+        }
+        ws.send(JSON.stringify(data));
+        document.getElementById("message").value = "";
+        
+        const ul = document.getElementById("messages") ;
+        const li = document.createElement("li");
+        li.innerText = `Me: ${message}`;
+        ul.appendChild(li);
+      }
+      
+      function onSubmitText() {
+        send(document.getElementById("message").value);
+      }
+      
+      function setUpOptions(options) {
+        const div = document.getElementById("options");
+        options.forEach((option) => {
+          const button = document.createElement("button");
+          button.innerText = option.name;
+          button.value = option.id;
+          div.appendChild(button);
+        });
       }
 
       const ws = new WebSocket("ws://localhost:3000");
       ws.onopen = () => {
         console.log("Connected to server");
-        ws.send("Hey Bun, I'm a player!");
+        document.getElementById("status").innerText = "Status: Connected";
+        send("Hello Bun, I'm a player!")
       };
+      
       ws.onmessage = (message) => {
-        console.log("Received message:", message.data);
+        const data = JSON.parse(message.data);
+        console.log("Received message:", message, data);
+        const ul = document.querySelector("ul");
+        const li = document.createElement("li");
+        li.innerText = `Remote: ${data.message}`;
+        ul.appendChild(li);
       };
+      
       ws.onclose = () => {
         console.log("Disconnected from server");
+        document.getElementById("status").innerText = "Status: Disconnected";
       };
       ws.onerror = (error) => {
         console.error("Error:", error);
+        document.getElementById("status").innerText = "Status: Error";
       };
     </script>
   </head>
   <body>
+    <h3 id="status">Status: Unknown</h3>
+  <ul id="messages">
+<!--  Messages go here  -->
+  </ul>
+    <input id="message" type="text" />
+    <button onclick="onSubmitText()" type="submit" onsubmit="onSubmitText()">Send</button>
     <h1>Welcome to the Black Dome of Death!</h1>
     <p>This game is nowhere near functional yet.</p>
-    <input id="message" type="text" />
-    <button onclick="send()">Send</button>
+  
+  <div>
+    <button>Option 1</button>
+    <button></button>
+    <button></button>
+    <button></button>
+  </div>
   </body>
 </html>

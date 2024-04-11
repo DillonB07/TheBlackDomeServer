@@ -32,6 +32,4 @@ wss.on("connection", (ws) => {
       }
     });
   });
-
-  ws.send("Hi, I'm Bun!");
 });
