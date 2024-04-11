@@ -9,6 +9,141 @@ The purpose of this server is to allow multiple people to vote on options and co
 happens inside a Unity game.
 
 
+## Technical Information
+
+The server purely relays data between all of the clients. All logic is handled by the clients. 
+
+> [!CAUTION]
+> ***This is fundamentally insecure, NEVER do this in a production environment.***
+
+### Data Types
+
+#### Messages
+
+The `message` type is used to communicate informally between the game and client. The main use 
+for this is streaming logs to the game client or sending messages to the player client which 
+will aid debugging.
+
+##### Player Client
+```json5
+{
+  "message": "Hello World from a player!",
+  "playerId": 1712857177,
+  "type": "message", 
+  "clientType": "player"
+}
+```
+
+##### Game Client
+```json5
+{
+  "message": "Hallo World from Unity!",
+  "type": "message",
+  "clientType": "game"
+}
+```
+
+##### Properties
+
+- `message`: `string`
+- `type`: `string`
+- `clientType`: `string`
+- `playerId`: `number`
+
+#### Polls
+
+The `poll` type is used to send a poll to the player client to vote on what happens next in the 
+game. The game client will send this message to the player client when there is an available 
+choice in the game.
+
+##### Player Client
+The player client should never be sending a message with the type of `poll`. The game client will not be looking for this and will ignore it.
+
+##### Game Client
+```json5
+{
+  "title": "string",
+  "options": [
+    {
+      "id": "string",
+      "text": "string"
+    }
+  ],
+  "clientType": "game",
+  "type": "poll",
+  "id": "string",
+  "endTime": number
+}
+```
+
+#### Vote
+
+The `vote` type is sent by players to vote on a poll. This will then be relayed to the game 
+client and all other player clients so that votes can be updated in real time.
+
+##### Player Client
+
+```json5
+{
+  "optionId": "string",
+  "clientType": "player",
+  "type": "vote",
+  "pollId": "string",
+  "playerId": number
+}
+```
+
+##### Game Client
+
+The game client should never be sending a message with the type of `vote`. The player client will not be looking for this and will ignore it.
+
+#### Announcement
+
+The `announcement` type is sent by the game client to players to display important information about what is going on in the game. It will display a modal on the player clients. 
+
+##### Player Client
+
+The player client should never be sending a message with the type of `announcement`
+
+##### Game Client
+
+```json5
+{
+  "type": "announcement",
+  "heading": "string",
+  "description": "string",
+  "backgroundColor": "string",
+  "textColor": "string"
+}
+```
+
+#### Poll Closing
+
+##### Player Client
+
+The player client should never be sending a message with the type of `voteClosure`. The game client will not be looking for this and will ignore it.
+
+### Data Properties
+- `message`: `string` - The message to be relayed. This is only applicable to the `message` type.
+- `playerId`: `number` - The id of the player sending the message. This is only applicable to 
+  the `player` client type and should be attached to all data sent by the player.
+- `type`: `string` - The type of message. This can be `message`, `poll`, `vote`, `voteClosure`.
+- `clientType`: `string` - The type of client sending the message. This can be `player` or `game`.
+- `title`: `string` - The title of the poll. This is only applicable to the `poll` type.
+- `options`: `array` - An array of options for the poll. This is only applicable to the `poll` 
+  type. Each option should have the following properties:
+  - `id`: `string` - The id of the option. e.g. `read-book` 
+  - `text`: `string` - The text of the option. e.g. `Read a book`
+- `id`: `string` - The id of the poll. This is only applicable to the `poll` type.
+- `endTime`: `number` - The time in Unix time when the poll will end. This is only applicable to 
+  the `poll` type.
+- `optionId`: `string` - The id of the option that the player is voting for. This should match 
+  the `id` field of one option from a `poll.options` data type. This is only applicable to the `vote` type.
+- `pollId`: `string` - The id of the poll that the player is voting on. This should match the 
+  `id` field from a `poll` data type. This is only applicable to the `vote` type.
+- ``
+
+
 ## Usage:
 
 ### Running the Server
