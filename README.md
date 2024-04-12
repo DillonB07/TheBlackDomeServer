@@ -1,4 +1,4 @@
-> [!WARNING]  
+> [!WARNING]
 > This is a work in progress. It is also **_not_** designed to be secure at all. You should not
 > use this server for a production game.
 
@@ -246,7 +246,7 @@ bun install
 
 To run:
 
-> [!NOTE]  
+> [!NOTE]
 > This server has not been tested with Node.js, but it should work once compiled to JavaScript as no Bun-specific APIs are used.
 
 ```bash
