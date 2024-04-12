@@ -46,9 +46,13 @@ will aid debugging.
 ##### Properties
 
 - `message`: `string`
+  - The message to be displayed to the player clients.
 - `type`: `string`
+  - The data type. This should always be `"message"`.
 - `clientType`: `string`
+  - The type of client sending the message. This should always be `"player"` or `"game"`.
 - `playerId`: `number`
+  - The id of the player sending the message and is used to identify unique clients.
 
 #### Polls
 
@@ -62,19 +66,50 @@ The player client should never be sending a message with the type of `poll`. The
 ##### Game Client
 ```json5
 {
-  "title": "string",
+  "title": "What should the doctor do?",
   "options": [
     {
-      "id": "string",
-      "text": "string"
+      "id": "bloodlet-the-patient",
+      "text": "Bloodlet the patient"
+    },
+    {
+      "id": "give-the-patient-a-herbal-remedy",
+      "text": "Give the patient a herbal remedy"
+    },
+    {
+      "id": "do-nothing",
+      "text": "Do nothing"
+    },
+    {
+      "id": "burn-the-patients-house-down",
+      "text": "Burn the patient's house down"
     }
   ],
   "clientType": "game",
   "type": "poll",
-  "id": "string",
-  "endTime": number
+  "id": "doctor-choice-1",
+  "endTime": 1712911621323
 }
 ```
+
+##### Properties
+
+- `title`: `string`
+  - The title of the poll.
+- `options`: `array`
+  - An array of options for the poll. Each option should have the following properties:
+    - `id`: `string`
+      - The id of the option. e.g. `"read-book"`
+    - `text`: `string`
+      - The text of the option. e.g. `"Read a book"`
+- `clientType`: `string`
+  - The type of client sending the message. This should always be `"game"`.
+- `type`: `string`
+  - The data type. This should always be `"poll"`.
+- `id`: `string`    
+  - The id of the poll. This should be unique for each poll.
+- `endTime`: `number`
+  - The time in milliseconds when the poll will close. This should be a Unix timestamp.
 
 #### Vote
 
@@ -85,17 +120,30 @@ client and all other player clients so that votes can be updated in real time.
 
 ```json5
 {
-  "optionId": "string",
+  "optionId": "burn-the-patients-house-down",
   "clientType": "player",
   "type": "vote",
   "pollId": "string",
-  "playerId": number
+  "playerId":   "playerId": 1712857177,
 }
 ```
 
 ##### Game Client
 
 The game client should never be sending a message with the type of `vote`. The player client will not be looking for this and will ignore it.
+
+##### Properties
+
+- `optionId`: `string`
+  - The id of the option that the player is voting for. This should match the `id` field of one option from a `poll.options` data type.
+- `clientType`: `string`
+  - The type of client sending the message. This should always be `"player"`.
+- `type`: `string`
+  - The data type. This should always be `"vote"`.
+- `pollId`: `string`
+  - The id of the poll that the player is voting on. This should match the `id` field from a `poll` data type.
+- `playerId`: `number`
+  - The id of the player sending the message used by the game client to identify unique votes.
 
 #### Announcement
 
@@ -110,12 +158,28 @@ The player client should never be sending a message with the type of `announceme
 ```json5
 {
   "type": "announcement",
-  "heading": "string",
-  "description": "string",
-  "backgroundColor": "string",
-  "textColor": "string"
+  "heading": "Game Paused!",
+  "description": "Due to a technical issue, the game has been paused. Please wait for further instructions.",
+  "backgroundColor": "#000",
+  "textColor": "#fff",
+  "clientType": "game"
 }
 ```
+
+##### Properties
+
+- `type`: `string`
+  - The data type. This should always be `"announcement"`.
+- `heading`: `string`
+  - The title of the announcement.
+- `description`: `string`
+  - The description of the announcement.
+- `backgroundColor`: `string`
+  - The background color of the announcement modal as a hex code.
+- `textColor`: `string`
+  - The text color of the announcement modal as a hex code.
+- `clientType`: `string`
+  - The type of client sending the message. This should always be `"game"`.
 
 #### Poll Closing
 
@@ -123,28 +187,53 @@ The player client should never be sending a message with the type of `announceme
 
 The player client should never be sending a message with the type of `voteClosure`. The game client will not be looking for this and will ignore it.
 
-### Data Properties
-- `message`: `string` - The message to be relayed. This is only applicable to the `message` type.
-- `playerId`: `number` - The id of the player sending the message. This is only applicable to 
-  the `player` client type and should be attached to all data sent by the player.
-- `type`: `string` - The type of message. This can be `message`, `poll`, `vote`, `voteClosure`.
-- `clientType`: `string` - The type of client sending the message. This can be `player` or `game`.
-- `title`: `string` - The title of the poll. This is only applicable to the `poll` type.
-- `options`: `array` - An array of options for the poll. This is only applicable to the `poll` 
-  type. Each option should have the following properties:
-  - `id`: `string` - The id of the option. e.g. `read-book` 
-  - `text`: `string` - The text of the option. e.g. `Read a book`
-- `id`: `string` - The id of the poll. This is only applicable to the `poll` type.
-- `endTime`: `number` - The time in Unix time when the poll will end. This is only applicable to 
-  the `poll` type.
-- `optionId`: `string` - The id of the option that the player is voting for. This should match 
-  the `id` field of one option from a `poll.options` data type. This is only applicable to the `vote` type.
-- `pollId`: `string` - The id of the poll that the player is voting on. This should match the 
-  `id` field from a `poll` data type. This is only applicable to the `vote` type.
-- ``
+##### Game Client
 
+```json5
+{
+  "type": "voteClosure",
+  "pollId": "doctor-choice-1",
+  "clientType": "game",
+  "results": [
+    {
+      "optionId": "bloodlet-the-patient",
+      "votes": 2
+    },
+    {
+      "optionId": "give-the-patient-a-herbal-remedy",
+      "votes": 1
+    },
+    {
+      "optionId": "do-nothing",
+      "votes": 0
+    },
+    {
+      "optionId": "burn-the-patients-house-down",
+      "votes": 0
+    }
+  ],
+  "reason": "Nuh uh, you don't get a choice!"
+}
+```
 
-## Usage:
+##### Properties
+
+- `type`: `string`
+  - The data type. This should always be `"voteClosure"`.
+- `pollId`: `string`
+  - The id of the poll that is closing. This should match the `id` field from a `poll` data type.
+- `clientType`: `string`
+  - The type of client sending the message. This should always be `"game"`.
+- `results`: `array`
+  - An array of results for the poll. Each result should have the following properties:
+    - `optionId`: `string`
+      - The id of the option. e.g. `"read-book"`
+    - `votes`: `number`
+      - The number of votes that the option received.
+- `reason`: `string`
+  - The reason for the poll closing. This should be a short description of why the poll is closing for the player's reference.
+
+## Usage
 
 ### Running the Server
 ```bash
