@@ -1,17 +1,16 @@
-> [!WARNING]  
-> This is a work in progress. It is also ***not*** designed to be secure at all. You should not 
+> [!WARNING]
+> This is a work in progress. It is also **_not_** designed to be secure at all. You should not
 > use this server for a production game.
+
 # BlackDomeServer
 
-
 This websocket server is for my college summative A2 development project.
-The purpose of this server is to allow multiple people to vote on options and control what 
+The purpose of this server is to allow multiple people to vote on options and control what
 happens inside a Unity game.
-
 
 ## Technical Information
 
-The server purely relays data between all of the clients. All logic is handled by the clients. 
+The server purely relays data between all of the clients. All logic is handled by the clients.
 
 > [!CAUTION]
 > This is fundamentally insecure, **NEVER** do this in a production environment.
@@ -20,26 +19,28 @@ The server purely relays data between all of the clients. All logic is handled b
 
 #### Messages
 
-The `message` type is used to communicate informally between the game and client. The main use 
-for this is streaming logs to the game client or sending messages to the player client which 
+The `message` type is used to communicate informally between the game and client. The main use
+for this is streaming logs to the game client or sending messages to the player client which
 will aid debugging.
 
 ##### Player Client
+
 ```json5
 {
-  "message": "Hello World from a player!",
-  "playerId": 1712857177,
-  "type": "message", 
-  "clientType": "player"
+  message: "Hello World from a player!",
+  playerId: 1712857177,
+  type: "message",
+  clientType: "player",
 }
 ```
 
 ##### Game Client
+
 ```json5
 {
-  "message": "Hallo World from Unity!",
-  "type": "message",
-  "clientType": "game"
+  message: "Hallo World from Unity!",
+  type: "message",
+  clientType: "game",
 }
 ```
 
@@ -56,39 +57,41 @@ will aid debugging.
 
 #### Polls
 
-The `poll` type is used to send a poll to the player client to vote on what happens next in the 
-game. The game client will send this message to the player client when there is an available 
+The `poll` type is used to send a poll to the player client to vote on what happens next in the
+game. The game client will send this message to the player client when there is an available
 choice in the game.
 
 ##### Player Client
+
 The player client should never be sending a message with the type of `poll`. The game client will not be looking for this and will ignore it.
 
 ##### Game Client
+
 ```json5
 {
-  "title": "What should the doctor do?",
-  "options": [
+  title: "What should the doctor do?",
+  options: [
     {
-      "id": "bloodlet-the-patient",
-      "text": "Bloodlet the patient"
+      id: "bloodlet-the-patient",
+      text: "Bloodlet the patient",
     },
     {
-      "id": "give-the-patient-a-herbal-remedy",
-      "text": "Give the patient a herbal remedy"
+      id: "give-the-patient-a-herbal-remedy",
+      text: "Give the patient a herbal remedy",
     },
     {
-      "id": "do-nothing",
-      "text": "Do nothing"
+      id: "do-nothing",
+      text: "Do nothing",
     },
     {
-      "id": "burn-the-patients-house-down",
-      "text": "Burn the patient's house down"
-    }
+      id: "burn-the-patients-house-down",
+      text: "Burn the patient's house down",
+    },
   ],
-  "clientType": "game",
-  "type": "poll",
-  "id": "doctor-choice-1",
-  "endTime": 1712911621323
+  clientType: "game",
+  type: "poll",
+  id: "doctor-choice-1",
+  endTime: 1712911621323,
 }
 ```
 
@@ -106,25 +109,25 @@ The player client should never be sending a message with the type of `poll`. The
   - The type of client sending the message. This should always be `"game"`.
 - `type`: `string`
   - The data type. This should always be `"poll"`.
-- `id`: `string`    
+- `id`: `string`
   - The id of the poll. This should be unique for each poll.
 - `endTime`: `number`
   - The time in milliseconds when the poll will close. This should be a Unix timestamp.
 
 #### Vote
 
-The `vote` type is sent by players to vote on a poll. This will then be relayed to the game 
+The `vote` type is sent by players to vote on a poll. This will then be relayed to the game
 client and all other player clients so that votes can be updated in real time.
 
 ##### Player Client
 
 ```json5
 {
-  "optionId": "burn-the-patients-house-down",
-  "clientType": "player",
-  "type": "vote",
-  "pollId": "string",
-  "playerId": 1712857177,
+  optionId: "burn-the-patients-house-down",
+  clientType: "player",
+  type: "vote",
+  pollId: "string",
+  playerId: 1712857177,
 }
 ```
 
@@ -147,7 +150,7 @@ The game client should never be sending a message with the type of `vote`. The p
 
 #### Announcement
 
-The `announcement` type is sent by the game client to players to display important information about what is going on in the game. It will display a modal on the player clients. 
+The `announcement` type is sent by the game client to players to display important information about what is going on in the game. It will display a modal on the player clients.
 
 ##### Player Client
 
@@ -157,12 +160,12 @@ The player client should never be sending a message with the type of `announceme
 
 ```json5
 {
-  "type": "announcement",
-  "heading": "Game Paused!",
-  "description": "Due to a technical issue, the game has been paused. Please wait for further instructions.",
-  "backgroundColor": "#000",
-  "textColor": "#fff",
-  "clientType": "game"
+  type: "announcement",
+  heading: "Game Paused!",
+  description: "Due to a technical issue, the game has been paused. Please wait for further instructions.",
+  backgroundColor: "#000",
+  textColor: "#fff",
+  clientType: "game",
 }
 ```
 
@@ -191,28 +194,28 @@ The player client should never be sending a message with the type of `voteClosur
 
 ```json5
 {
-  "type": "voteClosure",
-  "pollId": "doctor-choice-1",
-  "clientType": "game",
-  "results": [
+  type: "voteClosure",
+  pollId: "doctor-choice-1",
+  clientType: "game",
+  results: [
     {
-      "optionId": "bloodlet-the-patient",
-      "votes": 2
+      optionId: "bloodlet-the-patient",
+      votes: 2,
     },
     {
-      "optionId": "give-the-patient-a-herbal-remedy",
-      "votes": 1
+      optionId: "give-the-patient-a-herbal-remedy",
+      votes: 1,
     },
     {
-      "optionId": "do-nothing",
-      "votes": 0
+      optionId: "do-nothing",
+      votes: 0,
     },
     {
-      "optionId": "burn-the-patients-house-down",
-      "votes": 0
-    }
+      optionId: "burn-the-patients-house-down",
+      votes: 0,
+    },
   ],
-  "reason": "Nuh uh, you don't get a choice!"
+  reason: "Nuh uh, you don't get a choice!",
 }
 ```
 
@@ -236,12 +239,14 @@ The player client should never be sending a message with the type of `voteClosur
 ## Usage
 
 ### Running the Server
+
 ```bash
 bun install
 ```
 
 To run:
-> [!NOTE]  
+
+> [!NOTE]
 > This server has not been tested with Node.js, but it should work once compiled to JavaScript as no Bun-specific APIs are used.
 
 ```bash
@@ -249,9 +254,9 @@ bun start
 ```
 
 ### Connecting from Unity.
+
 Here is an example script to connect to the server from Unity.
 I am using the [endel/NativeWebSocket](https://github.com/endel/NativeWebSocket) package for WebSocket support in Unity.
-
 
 ```csharp
 using System.Collections;
@@ -317,13 +322,13 @@ public class SocketManager : MonoBehaviour
             await _websocket.SendText("Hello, I'm Unity!");
         }
     }
-    
+
     // Disconnect from the server when the game is closed
     private async void OnApplicationQuit()
     {
         await _websocket.Close();
     }
-    
+
 }
 
 ```
