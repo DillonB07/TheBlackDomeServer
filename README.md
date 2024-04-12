@@ -124,7 +124,7 @@ client and all other player clients so that votes can be updated in real time.
   "clientType": "player",
   "type": "vote",
   "pollId": "string",
-  "playerId":   "playerId": 1712857177,
+  "playerId": 1712857177,
 }
 ```
 
