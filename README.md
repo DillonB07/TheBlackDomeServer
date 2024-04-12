@@ -14,7 +14,7 @@ happens inside a Unity game.
 The server purely relays data between all of the clients. All logic is handled by the clients. 
 
 > [!CAUTION]
-> ***This is fundamentally insecure, NEVER do this in a production environment.***
+> This is fundamentally insecure, **NEVER** do this in a production environment.
 
 ### Data Types
 
