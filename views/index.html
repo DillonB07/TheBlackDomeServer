@@ -4,12 +4,12 @@
     <title>Black Dome of Death</title>
     <script>
       const playerId = Math.floor(Math.random() * Date.now())
-      function send(message) {
+      function send(message, type) {
         const data = {
           message,
           timestamp: Date.now(),
-          clientType: "player",
-          playerId
+          playerId,
+          type
         }
         ws.send(JSON.stringify(data));
         document.getElementById("message").value = "";
@@ -21,7 +21,7 @@
       }
       
       function onSubmitText() {
-        send(document.getElementById("message").value);
+        send(document.getElementById("message").value, "message");
       }
       
       function setUpOptions(options) {
@@ -34,7 +34,7 @@
         });
       }
 
-      const ws = new WebSocket("ws://localhost:3000");
+      const ws = new WebSocket(`wss://${window.location.host}`);
       ws.onopen = () => {
         console.log("Connected to server");
         document.getElementById("status").innerText = "Status: Connected";
