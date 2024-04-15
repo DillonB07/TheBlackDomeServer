@@ -30,7 +30,6 @@ will aid debugging.
   message: "Hello World from a player!",
   playerId: 1712857177,
   type: "message",
-  clientType: "player",
 }
 ```
 
@@ -40,7 +39,6 @@ will aid debugging.
 {
   message: "Hallo World from Unity!",
   type: "message",
-  clientType: "game",
 }
 ```
 
@@ -50,8 +48,6 @@ will aid debugging.
   - The message to be displayed to the player clients.
 - `type`: `string`
   - The data type. This should always be `"message"`.
-- `clientType`: `string`
-  - The type of client sending the message. This should always be `"player"` or `"game"`.
 - `playerId`: `number`
   - The id of the player sending the message and is used to identify unique clients.
 
@@ -88,7 +84,6 @@ The player client should never be sending a message with the type of `poll`. The
       text: "Burn the patient's house down",
     },
   ],
-  clientType: "game",
   type: "poll",
   id: "doctor-choice-1",
   endTime: 1712911621323,
@@ -105,8 +100,6 @@ The player client should never be sending a message with the type of `poll`. The
       - The id of the option. e.g. `"read-book"`
     - `text`: `string`
       - The text of the option. e.g. `"Read a book"`
-- `clientType`: `string`
-  - The type of client sending the message. This should always be `"game"`.
 - `type`: `string`
   - The data type. This should always be `"poll"`.
 - `id`: `string`
@@ -124,7 +117,6 @@ client and all other player clients so that votes can be updated in real time.
 ```json5
 {
   optionId: "burn-the-patients-house-down",
-  clientType: "player",
   type: "vote",
   pollId: "string",
   playerId: 1712857177,
@@ -139,8 +131,6 @@ The game client should never be sending a message with the type of `vote`. The p
 
 - `optionId`: `string`
   - The id of the option that the player is voting for. This should match the `id` field of one option from a `poll.options` data type.
-- `clientType`: `string`
-  - The type of client sending the message. This should always be `"player"`.
 - `type`: `string`
   - The data type. This should always be `"vote"`.
 - `pollId`: `string`
@@ -165,7 +155,6 @@ The player client should never be sending a message with the type of `announceme
   description: "Due to a technical issue, the game has been paused. Please wait for further instructions.",
   backgroundColor: "#000",
   textColor: "#fff",
-  clientType: "game",
 }
 ```
 
@@ -181,8 +170,6 @@ The player client should never be sending a message with the type of `announceme
   - The background color of the announcement modal as a hex code.
 - `textColor`: `string`
   - The text color of the announcement modal as a hex code.
-- `clientType`: `string`
-  - The type of client sending the message. This should always be `"game"`.
 
 #### Poll Closing
 
@@ -196,7 +183,6 @@ The player client should never be sending a message with the type of `voteClosur
 {
   type: "voteClosure",
   pollId: "doctor-choice-1",
-  clientType: "game",
   results: [
     {
       optionId: "bloodlet-the-patient",
@@ -225,8 +211,6 @@ The player client should never be sending a message with the type of `voteClosur
   - The data type. This should always be `"voteClosure"`.
 - `pollId`: `string`
   - The id of the poll that is closing. This should match the `id` field from a `poll` data type.
-- `clientType`: `string`
-  - The type of client sending the message. This should always be `"game"`.
 - `results`: `array`
   - An array of results for the poll. Each result should have the following properties:
     - `optionId`: `string`
