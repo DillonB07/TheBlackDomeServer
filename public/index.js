@@ -1,26 +1,26 @@
-const playerId = Math.floor(Math.random() * Date.now())
+const playerId = Math.floor(Math.random() * Date.now());
 
 function send(data, type) {
   const req = {
     ...data,
     timestamp: Date.now(),
     playerId,
-    type
-  }
+    type,
+  };
   ws.send(JSON.stringify(req));
 
-  if (type == "message") { 
-  document.getElementById("message").value = "";
-  const ul = document.getElementById("messages") ;
-  const li = document.createElement("li");
-  li.innerText = `Me: ${data.message}`;
-  ul.appendChild(li);
+  if (type == "message") {
+    document.getElementById("message").value = "";
+    const ul = document.getElementById("messages");
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>&lt;Me&gt;</strong> ${data.message}`;
+    ul.appendChild(li);
   }
 }
 
 function onSubmitText(e) {
   e.preventDefault();
-  send({message: document.getElementById("message").value}, "message");
+  send({ message: document.getElementById("message").value }, "message");
 }
 
 function createPoll(title, id, options, startTime, endTime) {
@@ -39,26 +39,31 @@ function createPoll(title, id, options, startTime, endTime) {
     const button = document.createElement("button");
     button.innerText = option.name;
     button.value = option.id;
-    button.classList.add("poll-button")
-    button.onclick = function () {vote(this)};
+    button.classList.add("poll-button");
+    button.onclick = function () {
+      vote(this);
+    };
     pollContainer.appendChild(button);
   });
 }
 
 function vote(btn) {
-  console.log(`Voted for ${btn.value}`)
-  send({
-    optionId: btn.value,
-    pollId: btn.parentElement.id
-  }, "vote")
-
+  console.log(`Voted for ${btn.value}`);
+  send(
+    {
+      optionId: btn.value,
+      pollId: btn.parentElement.id,
+    },
+    "vote",
+  );
 }
 
 const ws = new WebSocket(`wss://${window.location.host}`);
 ws.onopen = () => {
   console.log("Connected to server");
-  document.getElementById("status").innerText = "Status: Connected";
-  send("Hello Bun, I'm a player!")
+  const status = document.getElementById("status");
+  status.setAttribute("status", "healthy");
+  send({ message: "Hello Bun, I'm a player!" }, "message");
 };
 
 ws.onmessage = (message) => {
@@ -67,13 +72,19 @@ ws.onmessage = (message) => {
 
   switch (data.type) {
     case "poll":
-      console.log("Poll received, setting up", data)
-      createPoll(data.title, data.id, data.options, data.timestamp, data.endTime);
-      break
+      console.log("Poll received, setting up", data);
+      createPoll(
+        data.title,
+        data.id,
+        data.options,
+        data.timestamp,
+        data.endTime,
+      );
+      break;
     case "message":
       const ul = document.querySelector("ul");
       const li = document.createElement("li");
-      li.innerText = `${data.playerId ? "Player" : 'Unity'}: ${data.message}`;
+      li.innerHTML = `<strong>&lt;${data.playerId ? "Player" : "Unity"}&gt;</strong> ${data.message}`;
       ul.appendChild(li);
       break;
     case "vote":
@@ -90,10 +101,10 @@ ws.onmessage = (message) => {
 
 ws.onclose = () => {
   console.log("Disconnected from server");
-  document.getElementById("status").innerText = "Status: Disconnected";
+  document.getElementById("status").setAttribute("status", "unhealthy");
 };
 
 ws.onerror = (error) => {
   console.error("Error:", error);
-  document.getElementById("status").innerText = "Status: Error";
+  document.getElementById("status").setAttribute("status", "unhealthy");
 };

@@ -5,7 +5,7 @@ import { WebSocketServer } from "ws";
 const app = express();
 const port = 3000;
 
-app.use(express.static("public"))
+app.use(express.static("public"));
 app.engine("html", require("ejs").renderFile);
 app.set("view engine", "html");
 
