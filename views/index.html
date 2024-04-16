@@ -20,7 +20,8 @@
         ul.appendChild(li);
       }
       
-      function onSubmitText() {
+      function onSubmitText(e) {
+        e.preventDefault();
         send(document.getElementById("message").value, "message");
       }
       
@@ -60,21 +61,22 @@
       };
     </script>
   </head>
+
   <body>
     <h3 id="status">Status: Unknown</h3>
   <ul id="messages">
 <!--  Messages go here  -->
   </ul>
+    <form onsubmit="onSubmitText(event)">
     <input id="message" type="text" />
-    <button onclick="onSubmitText()" type="submit" onsubmit="onSubmitText()">Send</button>
+    <button onclick="onSubmitText(event)" type="submit" onsubmit="onSubmitText(event)">Send</button>
+    </form>
     <h1>Welcome to the Black Dome of Death!</h1>
     <p>This game is nowhere near functional yet.</p>
-  
-  <div>
-    <button>Option 1</button>
-    <button></button>
-    <button></button>
-    <button></button>
+
+  <button onclick='send("poll", "message")'></button>
+  <div id='options'>
+    <!-- Buttons for polls will be auto generated here -->
   </div>
   </body>
 </html>
