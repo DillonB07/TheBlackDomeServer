@@ -52,7 +52,7 @@ function checkPolls() {
       ];
       for (let option of poll.options) {
         if (option.votes > winners[0].votes) {
-          winners[0] = option;
+          winners = [option];
         } else if (option.votes === winners[0].votes) {
           winners.push(option);
         }
@@ -65,12 +65,10 @@ function checkPolls() {
           JSON.stringify({
             type: "voteClosure",
             pollId: poll.id,
-            results: poll.options.map((option) => {
-              return {
+            results: poll.options.map((option) => ({
                 optionId: option.id,
                 votes: option.votes,
-              };
-            }),
+            })),
           }),
         );
       });
