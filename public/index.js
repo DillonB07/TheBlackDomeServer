@@ -56,7 +56,7 @@ function vote(btn) {
   send(
     {
       optionId: btn.value,
-      pollId: btn.parentElement.id,
+      pollId: btn.parentElement.parentElement.id,
     },
     "vote",
   );
