@@ -34,16 +34,20 @@ function createPoll(title, id, options, startTime, endTime) {
   heading.innerText = title;
   heading.classList.add("poll-title");
   pollContainer.appendChild(heading);
+  const buttonContainer = document.createElement("div");
+  buttonContainer.classList.add("poll-buttons");
+  pollContainer.appendChild(buttonContainer);
 
   options.forEach((option) => {
     const button = document.createElement("button");
     button.innerText = option.name;
     button.value = option.id;
     button.classList.add("poll-button");
+    button.type = "button";
     button.onclick = function () {
       vote(this);
     };
-    pollContainer.appendChild(button);
+    buttonContainer.appendChild(button);
   });
 }
 
