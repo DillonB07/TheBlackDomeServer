@@ -69,6 +69,7 @@ function checkPolls() {
                 optionId: option.id,
                 votes: option.votes,
             })),
+            reason: "Poll closed! Please focus on the show!",
           }),
         );
       });
