@@ -17,6 +17,10 @@ app.get("/", (_req: Request, res: Response) => {
   res.render("index.html");
 });
 
+app.get("/admin", (_req: Request, res: Response) => {
+  res.render("admin.html");
+});
+
 const wss = new WebSocketServer({ server });
 
 interface Poll {
@@ -66,8 +70,8 @@ function checkPolls() {
             type: "voteClosure",
             pollId: poll.id,
             results: poll.options.map((option) => ({
-                optionId: option.id,
-                votes: option.votes,
+              optionId: option.id,
+              votes: option.votes,
             })),
             reason: `Poll closed with winner ${winner.name}! Please focus on the show!`,
           }),

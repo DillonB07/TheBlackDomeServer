@@ -23,6 +23,10 @@ function onSubmitText(e) {
   send({ message: document.getElementById("message").value }, "message");
 }
 
+function playCutscene(name) {
+  send({ message: `playCutscene|${name}` }, "message");
+}
+
 function createPoll(title, id, options, startTime, endTime) {
   const pollsContainer = document.getElementById("polls");
   const pollContainer = document.createElement("div");
@@ -54,7 +58,10 @@ function createPoll(title, id, options, startTime, endTime) {
 function closePoll(pollId, results, reason) {
   const poll = document.getElementById(pollId);
   poll.remove();
-  let winner = results.find((result) => result.votes === Math.max(...results.map((result) => result.votes)))
+  let winner = results.find(
+    (result) =>
+      result.votes === Math.max(...results.map((result) => result.votes)),
+  );
   const ul = document.getElementById("messages");
   const li = document.createElement("li");
   li.innerHTML = `<strong>&lt;Black Dome of Death&gt;</strong>${reason}`;
@@ -109,7 +116,7 @@ ws.onmessage = (message) => {
       break;
     case "voteClosure":
       console.log("Vote Closure received");
-      closePoll(data.pollId, data.results, data.reason)
+      closePoll(data.pollId, data.results, data.reason);
       break;
   }
 };

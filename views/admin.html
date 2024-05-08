@@ -1,20 +1,30 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Black Dome of Death</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="/index.js"></script>
     <link rel="stylesheet" href="/index.css" />
     <link
       href="https://api.fontshare.com/v2/css?f[]=clash-grotesk@200,300,400,500,600,700&f[]=switzer@100,101,200,201,300,301,400,401,500,501,600,601,700,701,800,801,900,901&display=swap"
       rel="stylesheet"
     />
+    <title>Admin Page 🙈</title>
   </head>
-
   <body>
     <div id="header">
       <div id="status" status="unknown"></div>
-      <h1>Black Dome of Death!</h1>
+      <h1>Welcome to this secret admin page 😳</h1>
     </div>
+    <h2>Polls</h2>
+    <button onclick="send({message: 'poll'}, 'message')">
+      Start Sample Poll
+    </button>
+    <h2>Cutscenes</h2>
+    <button onclick='playCutscene("Example")'>Example</button>
+    <button onclick="playCutscene('Example2')">Example2</button>
+    <hr />
     <div id="chat">
       <ul id="messages">
         <!--  Messages go here  -->
@@ -42,17 +52,6 @@
           </svg>
         </button>
       </form>
-    </div>
-    <p>This game is nowhere near functional yet.</p>
-
-    <button onclick='send({message: "poll"}, "message")' type="button">
-      Request poll
-    </button>
-    <button onclick='send({message: "start"}, "message")' type="button">
-      Start timeline
-    </button>
-    <div id="polls">
-      <!-- Buttons for polls will be auto generated here -->
     </div>
   </body>
 </html>
