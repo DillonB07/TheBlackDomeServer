@@ -69,7 +69,7 @@ function checkPolls() {
                 optionId: option.id,
                 votes: option.votes,
             })),
-            reason: "Poll closed! Please focus on the show!",
+            reason: `Poll closed with winner ${winner.name}! Please focus on the show!`,
           }),
         );
       });
