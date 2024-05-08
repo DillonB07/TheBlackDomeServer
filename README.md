@@ -49,7 +49,7 @@ will aid debugging.
 - `type`: `string`
   - The data type. This should always be `"message"`.
 - `playerId`: `number`
-  - The id of the player sending the message and is used to identify unique clients.
+  - The id of the player sending the message and is used to identify unique clients. This will be set to `0` to denote a system-wide message.
 
 #### Polls
 

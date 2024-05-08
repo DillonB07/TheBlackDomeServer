@@ -1,10 +1,10 @@
 const playerId = Math.floor(Math.random() * Date.now());
 
-function send(data, type) {
+function send(data, type, system = false) {
   const req = {
     ...data,
     timestamp: Date.now(),
-    playerId,
+    playerId: system ? 0 : playerId,
     type,
   };
   ws.send(JSON.stringify(req));
@@ -24,7 +24,7 @@ function onSubmitText(e) {
 }
 
 function playCutscene(name) {
-  send({ message: `playCutscene|${name}` }, "message");
+  send({ message: `playCutscene|${name}` }, "message", true);
 }
 
 function createPoll(title, id, options, startTime, endTime) {
@@ -103,6 +103,9 @@ ws.onmessage = (message) => {
       );
       break;
     case "message":
+      if (data.playerId === 0) {
+        break;
+      }
       const ul = document.querySelector("ul");
       const li = document.createElement("li");
       li.innerHTML = `<strong>&lt;${data.playerId ? "Player" : "Unity"}&gt;</strong> ${data.message}`;
