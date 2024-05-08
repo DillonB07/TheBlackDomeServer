@@ -50,6 +50,11 @@ function createPoll(title, id, options, startTime, endTime) {
     button.type = "button";
     button.onclick = function () {
       vote(this);
+      // Disable the buttons to prevent multiple votes
+      console.log(`Disabling buttons with query: #${this.parentElement.parentElement.id}.poll-buttons.poll-button`)
+      const buttons = document.querySelectorAll(`#${this.parentElement.parentElement.id} > div > button`)
+      buttons.forEach(btn => btn.disabled = true)
+    console.log(buttons)
     };
     buttonContainer.appendChild(button);
   });
@@ -118,7 +123,6 @@ ws.onmessage = (message) => {
       console.log("Announcement received");
       break;
     case "voteClosure":
-      console.log("Vote Closure received");
       closePoll(data.pollId, data.results, data.reason);
       break;
   }
