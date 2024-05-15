@@ -22,10 +22,29 @@
       Start Sample Poll
     </button>
     <h2>Cutscenes</h2>
-    <button onclick='playCutscene("Example")'>Example</button>
-    <button onclick="playCutscene('Example2')">Example2</button>
-    <button onclick="playCutscene('BallSquash')">
-      BallSquash</button>
+    <form onsubmit="onSubmitText(event, 'cutscene')">
+    <input type='text' placeholder='Cutscene Id' id='system-message' />
+      <button
+        onclick="onSubmitText(event, 'cutscene')"
+        type="submit"
+        onsubmit="onSubmitText(event, 'cutscene')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          style="width: 20px; height: 20px"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+          />
+        </svg>
+      </button>
+    </form>
     <hr />
     <div id="chat">
       <ul id="messages">

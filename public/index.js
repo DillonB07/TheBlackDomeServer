@@ -18,9 +18,15 @@ function send(data, type, system = false) {
   }
 }
 
-function onSubmitText(e) {
+function onSubmitText(e, type = 'message') {
   e.preventDefault();
-  send({ message: document.getElementById("message").value }, "message");
+  switch (type) {
+    case 'message':
+      send({ message: document.getElementById("message").value }, 'message');
+      break;
+    case 'cutscene':
+      send({message: `playCutscene|${document.getElementById("system-message").value}`}, 'message')
+   }
 }
 
 function playCutscene(name) {
