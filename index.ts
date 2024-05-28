@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 import { WebSocketServer } from "ws";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.static("public"));
 app.engine("html", require("ejs").renderFile);
