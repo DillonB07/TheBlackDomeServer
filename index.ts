@@ -29,6 +29,7 @@ interface Poll {
   options: PollOption[];
   endTime: number;
   timestamp: number;
+  votes: number[];
 }
 
 interface PollOption {
@@ -44,7 +45,8 @@ function checkPolls() {
   console.log("Checking polls");
   const now = Date.now();
   for (const poll of activePolls) {
-    if (now > poll.endTime) {
+    console.log(now, poll.endTime, " checking end status", now > poll.endTime);
+    if (now >= poll.endTime) {
       console.log(`"${poll.title}" Poll ended`);
       activePolls.splice(activePolls.indexOf(poll), 1);
       let winners: PollOption[] = [
@@ -89,6 +91,31 @@ wss.on("connection", (ws) => {
       const parsed = JSON.parse(msg);
       console.log(parsed);
       switch (parsed.type) {
+        case "join":
+          console.log(`Player ${parsed.playerId} joined`);
+          // respond to message
+          for (const poll of activePolls) {
+            ws.send(
+              JSON.stringify({
+                message: "Active polls found",
+                type: "message",
+              }),
+            );
+            if (!poll?.votes?.find((voter) => voter === parsed.playerId)) {
+              const pollData = {
+                type: "poll",
+                options: poll.options.map((option) => {
+                  return { name: option.name, id: option.id };
+                }),
+                title: poll.title,
+                endTime: poll.endTime / 1000,
+                timestamp: poll.timestamp,
+                id: poll.id,
+              };
+              ws.send(JSON.stringify(pollData));
+            }
+          }
+          break;
         case "poll":
           console.log("Poll received, setting up");
           activePolls.push({
@@ -102,6 +129,7 @@ wss.on("connection", (ws) => {
             ),
             endTime: parsed.endTime * 1000,
             timestamp: parsed.timestamp,
+            votes: [],
           });
           const delay = parsed.endTime * 1000 - Date.now();
           setTimeout(checkPolls, delay);
@@ -116,6 +144,7 @@ wss.on("connection", (ws) => {
             );
             if (option) {
               option.votes++;
+              poll.votes.push(parsed.playerId);
             } else {
               console.log("Invalid option received - ", parsed.optionId);
             }

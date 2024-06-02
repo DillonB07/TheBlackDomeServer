@@ -1,4 +1,7 @@
-const playerId = Math.floor(Math.random() * Date.now());
+// get playerId from local storage
+const playerId =
+  localStorage.getItem("playerId") || Math.floor(Math.random() * Date.now());
+localStorage.setItem("playerId", playerId);
 
 function send(data, type, system = false) {
   const req = {
@@ -18,15 +21,20 @@ function send(data, type, system = false) {
   }
 }
 
-function onSubmitText(e, type = 'message') {
+function onSubmitText(e, type = "message") {
   e.preventDefault();
   switch (type) {
-    case 'message':
-      send({ message: document.getElementById("message").value }, 'message');
+    case "message":
+      send({ message: document.getElementById("message").value }, "message");
       break;
-    case 'cutscene':
-      send({message: `playCutscene|${document.getElementById("system-message").value}`}, 'message')
-   }
+    case "cutscene":
+      send(
+        {
+          message: `playCutscene|${document.getElementById("system-message").value}`,
+        },
+        "message",
+      );
+  }
 }
 
 function playCutscene(name) {
@@ -44,6 +52,11 @@ function createPoll(title, id, options, startTime, endTime) {
   heading.innerText = title;
   heading.classList.add("poll-title");
   pollContainer.appendChild(heading);
+
+  const countdown = document.createElement("div");
+  countdown.classList.add("countdown");
+  pollContainer.appendChild(countdown);
+
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("poll-buttons");
   pollContainer.appendChild(buttonContainer);
@@ -57,13 +70,31 @@ function createPoll(title, id, options, startTime, endTime) {
     button.onclick = function () {
       vote(this);
       // Disable the buttons to prevent multiple votes
-      console.log(`Disabling buttons with query: #${this.parentElement.parentElement.id}.poll-buttons.poll-button`)
-      const buttons = document.querySelectorAll(`#${this.parentElement.parentElement.id} > div > button`)
-      buttons.forEach(btn => btn.disabled = true)
-    console.log(buttons)
+      const buttons = document.querySelectorAll(
+        `#${this.parentElement.parentElement.id} > div > button`,
+      );
+      buttons.forEach((btn) => (btn.disabled = true));
+      console.log(buttons);
     };
     buttonContainer.appendChild(button);
   });
+  updateCountdown(countdown, endTime);
+  const intervalId = setInterval(() => {
+    const timeLeft = updateCountdown(countdown, endTime);
+    if (timeLeft <= 0) {
+      clearInterval(intervalId);
+    }
+  }, 1000);
+}
+
+function updateCountdown(countdownElement, endTime) {
+  const now = Date.now();
+  const timeLeft = Math.max(0, endTime - now);
+  console.log("Left", timeLeft, now, endTime);
+  const seconds = Math.floor((timeLeft / 1000) % 60);
+  const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+  countdownElement.innerText = `Closing in ${minutes}m ${seconds}s`;
+  return timeLeft;
 }
 
 function closePoll(pollId, results, reason) {
@@ -95,7 +126,7 @@ ws.onopen = () => {
   console.log("Connected to server");
   const status = document.getElementById("status");
   status.setAttribute("status", "healthy");
-  send({ message: "Hello Bun, I'm a player!" }, "message");
+  send({ message: `Join|${playerId}` }, "join");
 };
 
 ws.onmessage = (message) => {
@@ -109,8 +140,8 @@ ws.onmessage = (message) => {
         data.title,
         data.id,
         data.options,
-        data.timestamp,
-        data.endTime,
+        data.timestamp * 1000,
+        data.endTime * 1000,
       );
       break;
     case "message":
