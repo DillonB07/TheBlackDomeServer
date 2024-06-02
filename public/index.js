@@ -121,56 +121,60 @@ function vote(btn) {
   );
 }
 
-const ws = new WebSocket(`wss://${window.location.host}`);
-ws.onopen = () => {
-  console.log("Connected to server");
-  const status = document.getElementById("status");
-  status.setAttribute("status", "healthy");
-  send({ message: `Join|${playerId}` }, "join");
-};
+function connect() {
+  const ws = new WebSocket(`wss://${window.location.host}`);
+  ws.onopen = () => {
+    console.log("Connected to server");
+    const status = document.getElementById("status");
+    status.setAttribute("status", "healthy");
+    send({ message: `Join|${playerId}` }, "join");
+  };
 
-ws.onmessage = (message) => {
-  const data = JSON.parse(message.data);
-  console.log("Received message:", message, data);
+  ws.onmessage = (message) => {
+    const data = JSON.parse(message.data);
+    console.log("Received message:", message, data);
 
-  switch (data.type) {
-    case "poll":
-      console.log("Poll received, setting up", data);
-      createPoll(
-        data.title,
-        data.id,
-        data.options,
-        data.timestamp * 1000,
-        data.endTime * 1000,
-      );
-      break;
-    case "message":
-      if (data.playerId === 0) {
+    switch (data.type) {
+      case "poll":
+        console.log("Poll received, setting up", data);
+        createPoll(
+          data.title,
+          data.id,
+          data.options,
+          data.timestamp * 1000,
+          data.endTime * 1000,
+        );
         break;
-      }
-      const ul = document.querySelector("ul");
-      const li = document.createElement("li");
-      li.innerHTML = `<strong>&lt;${data.playerId ? "Player" : "Unity"}&gt;</strong> ${data.message}`;
-      ul.appendChild(li);
-      break;
-    case "vote":
-      console.log("Vote received");
-      break;
-    case "announcement":
-      console.log("Announcement received");
-      break;
-    case "voteClosure":
-      closePoll(data.pollId, data.results, data.reason);
-      break;
-  }
-};
+      case "message":
+        if (data.playerId === 0) {
+          break;
+        }
+        const ul = document.querySelector("ul");
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>&lt;${data.playerId ? "Player" : "Unity"}&gt;</strong> ${data.message}`;
+        ul.appendChild(li);
+        break;
+      case "vote":
+        console.log("Vote received");
+        break;
+      case "announcement":
+        console.log("Announcement received");
+        break;
+      case "voteClosure":
+        closePoll(data.pollId, data.results, data.reason);
+        break;
+    }
+  };
 
-ws.onclose = () => {
-  console.log("Disconnected from server");
-  document.getElementById("status").setAttribute("status", "unhealthy");
-};
+  ws.onclose = () => {
+    console.log("Disconnected from server");
+    document.getElementById("status").setAttribute("status", "unhealthy");
+    setTimeout(connect, 1000);
+  };
 
-ws.onerror = (error) => {
-  console.error("Error:", error);
-  document.getElementById("status").setAttribute("status", "unhealthy");
-};
+  ws.onerror = (error) => {
+    console.error("Error:", error);
+    document.getElementById("status").setAttribute("status", "unhealthy");
+  };
+}
+connect();
