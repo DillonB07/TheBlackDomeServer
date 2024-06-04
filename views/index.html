@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Black Dome of Death</title>
     <script src="/index.js"></script>
+    <title>Black Dome</title>
     <link rel="stylesheet" href="/index.css" />
     <link
       href="https://api.fontshare.com/v2/css?f[]=clash-grotesk@200,300,400,500,600,700&f[]=switzer@100,101,200,201,300,301,400,401,500,501,600,601,700,701,800,801,900,901&display=swap"
@@ -13,46 +13,18 @@
   <body>
     <div id="header">
       <div id="status" status="unknown"></div>
-      <h1>Black Dome of Death!</h1>
+      <h1>The Black Dome</h1>
+    </div>
+    <div class='container'>
+      
+    <div id="polls">
+      <!-- Buttons for polls will be auto generated here -->
     </div>
     <div id="chat">
       <ul id="messages">
         <!--  Messages go here  -->
       </ul>
-      <!-- <form onsubmit="onSubmitText(event)">
-        <input id="message" type="text" />
-        <button
-          onclick="onSubmitText(event)"
-          type="submit"
-          onsubmit="onSubmitText(event)"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            style="width: 20px; height: 20px"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-            />
-          </svg>
-        </button>
-      </form> -->
     </div>
-    <p>This game is nowhere near functional yet.</p>
-
-    <button onclick='send({message: "poll"}, "message")' type="button">
-      Request poll
-    </button>
-    <button onclick='send({message: "start"}, "message")' type="button">
-      Start timeline
-    </button>
-    <div id="polls">
-      <!-- Buttons for polls will be auto generated here -->
     </div>
   </body>
 </html>

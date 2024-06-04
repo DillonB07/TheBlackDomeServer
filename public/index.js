@@ -74,7 +74,6 @@ function createPoll(title, id, options, startTime, endTime) {
         `#${this.parentElement.parentElement.id} > div > button`,
       );
       buttons.forEach((btn) => (btn.disabled = true));
-      console.log(buttons);
     };
     buttonContainer.appendChild(button);
   });
@@ -90,7 +89,6 @@ function createPoll(title, id, options, startTime, endTime) {
 function updateCountdown(countdownElement, endTime) {
   const now = Date.now();
   const timeLeft = Math.max(0, endTime - now);
-  console.log("Left", timeLeft, now, endTime);
   const seconds = Math.floor((timeLeft / 1000) % 60);
   const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
   countdownElement.innerText = `Closing in ${minutes}m ${seconds}s`;
@@ -111,7 +109,6 @@ function closePoll(pollId, results, reason) {
 }
 
 function vote(btn) {
-  console.log(`Voted for ${btn.value}`);
   send(
     {
       optionId: btn.value,
@@ -121,10 +118,10 @@ function vote(btn) {
   );
 }
 
+let ws;
 function connect() {
-  const ws = new WebSocket(`wss://${window.location.host}`);
+  ws = new WebSocket(`wss://${window.location.host}`);
   ws.onopen = () => {
-    console.log("Connected to server");
     const status = document.getElementById("status");
     status.setAttribute("status", "healthy");
     send({ message: `Join|${playerId}` }, "join");
@@ -132,11 +129,9 @@ function connect() {
 
   ws.onmessage = (message) => {
     const data = JSON.parse(message.data);
-    console.log("Received message:", message, data);
 
     switch (data.type) {
       case "poll":
-        console.log("Poll received, setting up", data);
         createPoll(
           data.title,
           data.id,
@@ -151,14 +146,8 @@ function connect() {
         }
         const ul = document.querySelector("ul");
         const li = document.createElement("li");
-        li.innerHTML = `<strong>&lt;${data.playerId ? "Player" : "Unity"}&gt;</strong> ${data.message}`;
+        li.innerHTML = `<strong>&lt;${data.playerId ? "Admin" : "Unity"}&gt;</strong> ${data.message}`;
         ul.appendChild(li);
-        break;
-      case "vote":
-        console.log("Vote received");
-        break;
-      case "announcement":
-        console.log("Announcement received");
         break;
       case "voteClosure":
         closePoll(data.pollId, data.results, data.reason);
@@ -167,7 +156,6 @@ function connect() {
   };
 
   ws.onclose = () => {
-    console.log("Disconnected from server");
     document.getElementById("status").setAttribute("status", "unhealthy");
     setTimeout(connect, 1000);
   };

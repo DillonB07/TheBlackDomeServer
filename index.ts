@@ -42,12 +42,9 @@ let activePolls: Poll[] = [];
 
 function checkPolls() {
   // Check if any active polls have ended. If so, remove them from activePolls list and broadcast the results to all clients. If multiple options have the same number of votes, the winning option is randomly selected from the tied options.
-  console.log("Checking polls");
   const now = Date.now();
   for (const poll of activePolls) {
-    console.log(now, poll.endTime, " checking end status", now > poll.endTime);
     if (now >= poll.endTime) {
-      console.log(`"${poll.title}" Poll ended`);
       activePolls.splice(activePolls.indexOf(poll), 1);
       let winners: PollOption[] = [
         {
@@ -87,9 +84,7 @@ wss.on("connection", (ws) => {
   ws.on("message", (message) => {
     if (Buffer.isBuffer(message)) {
       const msg = message.toString();
-      // console.log(msg);
       const parsed = JSON.parse(msg);
-      console.log(parsed);
       switch (parsed.type) {
         case "join":
           console.log(`Player ${parsed.playerId} joined`);
@@ -109,7 +104,7 @@ wss.on("connection", (ws) => {
                 }),
                 title: poll.title,
                 endTime: poll.endTime / 1000,
-                timestamp: poll.timestamp,
+                timestamp: poll.timestamp / 1000,
                 id: poll.id,
               };
               ws.send(JSON.stringify(pollData));
@@ -117,7 +112,6 @@ wss.on("connection", (ws) => {
           }
           break;
         case "poll":
-          console.log("Poll received, setting up");
           activePolls.push({
             id: parsed.id,
             title: parsed.title,
@@ -128,15 +122,13 @@ wss.on("connection", (ws) => {
               }),
             ),
             endTime: parsed.endTime * 1000,
-            timestamp: parsed.timestamp,
+            timestamp: parsed.timestamp * 1000,
             votes: [],
           });
           const delay = parsed.endTime * 1000 - Date.now();
           setTimeout(checkPolls, delay);
-          console.log("Waiting", delay, "ms");
           break;
         case "vote":
-          console.log("Vote received");
           const poll = activePolls.find((p) => p.id === parsed.pollId);
           if (poll) {
             const option = poll.options.find(
