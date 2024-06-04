@@ -101,6 +101,7 @@ body {
   width: 50vw;
   max-height: 50vh;
   border: 2px dotted #453750;
+  text-align: center;
   .poll {
     font-size: 2rem;
     background-color: rgb(32, 89, 223, 0.5);
