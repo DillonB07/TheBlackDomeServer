@@ -39,12 +39,13 @@ interface PollOption {
 }
 
 let activePolls: Poll[] = [];
+const POLL_TIMER = 1000 * 30;
 
 function checkPolls() {
   // Check if any active polls have ended. If so, remove them from activePolls list and broadcast the results to all clients. If multiple options have the same number of votes, the winning option is randomly selected from the tied options.
   const now = Date.now();
   for (const poll of activePolls) {
-    if (now >= poll.endTime) {
+    if (now / 1000 >= poll.endTime) {
       activePolls.splice(activePolls.indexOf(poll), 1);
       let winners: PollOption[] = [
         {
@@ -103,8 +104,8 @@ wss.on("connection", (ws) => {
                   return { name: option.name, id: option.id };
                 }),
                 title: poll.title,
-                endTime: poll.endTime / 1000,
-                timestamp: poll.timestamp / 1000,
+                endTime: poll.endTime,
+                timestamp: poll.timestamp,
                 id: poll.id,
               };
               ws.send(JSON.stringify(pollData));
@@ -121,12 +122,15 @@ wss.on("connection", (ws) => {
                 votes: 0,
               }),
             ),
-            endTime: parsed.endTime * 1000,
-            timestamp: parsed.timestamp * 1000,
+            endTime: parsed.endTime,
+            timestamp: parsed.timestamp,
             votes: [],
           });
-          const delay = parsed.endTime * 1000 - Date.now();
-          setTimeout(checkPolls, delay);
+          // const delay = Math.max(0, parsed.endTime * 1000 - POLL_TIMER);
+          // let now = Date.now();
+          // const delay = Math.max(0, (parsed.endTime - (now / 1000)) * 1000);
+          // console.log('Delaying poll check for ' + delay + 'ms')
+          setTimeout(checkPolls, POLL_TIMER);
           break;
         case "vote":
           const poll = activePolls.find((p) => p.id === parsed.pollId);
