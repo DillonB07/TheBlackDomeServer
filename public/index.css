@@ -102,6 +102,7 @@ body {
   max-height: 50vh;
   border: 2px dotted #453750;
   text-align: center;
+  flex: 1;
   .poll {
     font-size: 2rem;
     background-color: rgb(32, 89, 223, 0.5);
@@ -115,8 +116,10 @@ body {
     gap: 5px;
     flex-wrap: wrap;
     .poll-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
   }
 }

@@ -3,6 +3,8 @@ const playerId =
   localStorage.getItem("playerId") || Math.floor(Math.random() * Date.now());
 localStorage.setItem("playerId", playerId);
 
+const HIDDEN_MSGS = ['systemstart']
+
 function send(data, type, system = false) {
   const req = {
     ...data,
@@ -89,9 +91,9 @@ function createPoll(title, id, options, startTime, endTime) {
 function updateCountdown(countdownElement, endTime) {
   const now = Date.now();
   const timeLeft = Math.max(0, endTime - now);
+  console.log(`Now: ${now}, End: ${endTime}, Time left: ${timeLeft}`)
   const seconds = Math.floor((timeLeft / 1000) % 60);
-  const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
-  countdownElement.innerText = `Closing in ${minutes}m ${seconds}s`;
+  countdownElement.innerText = `Closing in ${seconds}s`;
   return timeLeft;
 }
 
@@ -102,10 +104,10 @@ function closePoll(pollId, results, reason) {
     (result) =>
       result.votes === Math.max(...results.map((result) => result.votes)),
   );
-  const ul = document.getElementById("messages");
-  const li = document.createElement("li");
-  li.innerHTML = `<strong>&lt;Black Dome of Death&gt;</strong>${reason}`;
-  ul.appendChild(li);
+  // const ul = document.getElementById("messages");
+  // const li = document.createElement("li");
+  // li.innerHTML = `<strong>&lt;Black Dome of Death&gt;</strong>${reason}`;
+  // ul.appendChild(li);
 }
 
 function vote(btn) {
@@ -137,11 +139,11 @@ function connect() {
           data.id,
           data.options,
           data.timestamp * 1000,
-          data.endTime * 1000,
+          Date.now() + 30000
         );
         break;
       case "message":
-        if (data.playerId === 0) {
+        if (data.playerId === 0 || HIDDEN_MSGS.includes(data.message)) {
           break;
         }
         const ul = document.querySelector("ul");
